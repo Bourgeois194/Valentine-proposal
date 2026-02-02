@@ -1,3 +1,44 @@
+// Load YouTube IFrame Player API code asynchronously.
+var tag = document.createElement('script');
+tag.src = "https://www.youtube.com/iframe_api";
+var firstScriptTag = document.getElementsByTagName('script')[0];
+firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+var player;
+var isYouTubeReady = false;
+
+function onYouTubeIframeAPIReady() {
+  player = new YT.Player('youtube-player', {
+    height: '100%',
+    width: '100%',
+    videoId: '09R8_2nJtjg', // Maroon 5 - Sugar
+    playerVars: {
+      'start': 40,
+      'controls': 0,
+      'autoplay': 1,
+      'mute': 1, // Start muted to allow autoplay
+      'rel': 0
+    },
+    events: {
+      'onReady': onPlayerReady,
+      'onError': onPlayerError,
+      'onStateChange': onPlayerStateChange
+    }
+  });
+}
+
+function onPlayerReady(event) {
+  isYouTubeReady = true;
+}
+
+function onPlayerStateChange(event) {
+  // If unmuted and playing, great. 
+}
+
+function onPlayerError(event) {
+  console.log("YouTube Player Error: ", event.data);
+}
+
 function showMessage(response) {
   let videoPlayed = false;
   if (response === "No") {
@@ -27,17 +68,16 @@ function showMessage(response) {
     // Add a mouseover event listener to the "No" button
     noButton.addEventListener("mouseover", () => {
       if (!videoPlayed) {
-        const videoElement = document.createElement("video");
-        videoElement.src = "./Maroon 5 - Sugar.mp4#t=42";
-        videoElement.autoplay = true;
-        videoElement.controls = false;
-        document.body.appendChild(videoElement);
-        videoElement.style.position = "fixed";
-        videoElement.style.top = "40%";
-        videoElement.style.left = "50%";
-        videoElement.style.transform = "translate(-50%, -50%)";
-        videoElement.style.width = "700px"
-        document.body.appendChild(videoElement);
+        if (isYouTubeReady && player) {
+          document.getElementById('youtube-player-container').style.display = 'block';
+          try {
+            player.unMute();
+            player.playVideo();
+          } catch (e) {
+            console.log("Autoplay blocked, user interaction needed");
+          }
+        }
+
         // Set the flag to true after playing the video
         videoPlayed = true;
       }
@@ -57,10 +97,15 @@ function showMessage(response) {
     // Remove the name message and the "No" button
     document.getElementById("name").remove();
     document.getElementById("no-button").remove();
-    const videoElement = document.querySelector("video");
-    if (videoElement) {
-      videoElement.pause();
-      videoElement.remove();
+
+    // Stop and remove video player (YouTube or Local)
+    const playerContainer = document.getElementById('youtube-player-container');
+    if (playerContainer) {
+      playerContainer.remove();
+    }
+    if (player && player.stopVideo) {
+      player.stopVideo();
+      player.destroy();
     }
 
     // Create an audio element to play the sound

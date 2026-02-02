@@ -4,6 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <title>Valentine</title>
 </head>
@@ -18,11 +21,8 @@
                 <button id="no-button" onclick="showMessage('No')">No</button>
                 <button onclick="showMessage('Yes')" id="yesButton">Yes</button>
             </div>
-            <div class="hidden-message" id="no-message">
-                <p>Nice try, but you can't escape that easily!</p>
-            </div>
-            <div class="hidden-message" id="yes-message">
-                <p>Yeees! See you on the 14th, Princess.</p>
+            <div id="youtube-player-container">
+                <div id="youtube-player"></div>
             </div>
         </div>
     </div>
